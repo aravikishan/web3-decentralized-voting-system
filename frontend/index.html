@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decentralized Voting System</title>
+</head>
+<body>
+    <h1>Decentralized Voting System</h1>
+    <form id="registerForm">
+        <h2>Register Voter</h2>
+        <input type="text" id="voterId" placeholder="Voter ID" required>
+        <input type="text" id="voterName" placeholder="Voter Name" required>
+        <button type="submit">Register</button>
+    </form>
+    <form id="voteForm">
+        <h2>Cast Vote</h2>
+        <input type="text" id="voteVoterId" placeholder="Voter ID" required>
+        <input type="text" id="candidate" placeholder="Candidate" required>
+        <button type="submit">Vote</button>
+    </form>
+    <h2>Results</h2>
+    <div id="results"></div>
+    <script>
+        document.getElementById('registerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const voterId = document.getElementById('voterId').value;
+            const voterName = document.getElementById('voterName').value;
+            await fetch('/register', { method: 'POST', body: JSON.stringify({ id: voterId, name: voterName, eligible: true }), headers: { 'Content-Type': 'application/json' }});
+        };
+        document.getElementById('voteForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const voteVoterId = document.getElementById('voteVoterId').value;
+            const candidate = document.getElementById('candidate').value;
+            await fetch('/vote', { method: 'POST', body: JSON.stringify({ voter_id: voteVoterId, candidate: candidate }), headers: { 'Content-Type': 'application/json' }});
+        };
+        async function fetchResults() {
+            const response = await fetch('/results');
+            const results = await response.json();
+            document.getElementById('results').innerText = JSON.stringify(results);
+        }
+        setInterval(fetchResults, 5000);
+    </script>
+</body>
+</html>
